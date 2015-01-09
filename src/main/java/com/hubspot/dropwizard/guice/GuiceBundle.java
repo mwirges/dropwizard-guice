@@ -137,7 +137,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
 
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
-        initInjector = Guice.createInjector(this.stage, this.initModules);
+        initInjector();
         if (autoConfig != null) {
             autoConfig.initialize(bootstrap, initInjector);
         }
@@ -152,6 +152,15 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
                 ((GuiceCommand) c).setInit(this);
             }
         }
+    }
+
+    private void initInjector() {
+        try {
+	        initInjector = Guice.createInjector(this.stage, this.initModules);
+        } catch(Exception ie) {
+		    logger.error("Exception occurred when creating Guice Injector - exiting", ie);
+		    System.exit(1);
+	    }
     }
 
     @Override

@@ -4,15 +4,16 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import io.dropwizard.Bundle;
 import io.dropwizard.cli.Command;
-import io.dropwizard.cli.ConfiguredCommand;
 import io.dropwizard.cli.EnvironmentCommand;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
 import com.google.common.base.Preconditions;
 import com.google.inject.Injector;
 import com.sun.jersey.spi.inject.InjectableProvider;
+
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -119,12 +120,22 @@ public class AutoConfig {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void addBundles(Bootstrap<?> bootstrap, Injector injector) {
 		Set<Class<? extends Bundle>> bundleClasses = reflections
 				.getSubTypesOf(Bundle.class);
 		for (Class<? extends Bundle> bundle : bundleClasses) {
 			bootstrap.addBundle(injector.getInstance(bundle));
 			logger.info("Added bundle class {} during bootstrap", bundle);
+		}
+		Set<Class<? extends ConfiguredBundle>> configuredBundleClasses = reflections.getSubTypesOf(ConfiguredBundle.class);
+		for(Class<? extends ConfiguredBundle> bundle : configuredBundleClasses)
+		{
+			if(!bundle.equals(GuiceBundle.class))
+			{
+				bootstrap.addBundle(injector.getInstance(bundle));
+				logger.info("Added configured bundle class {} during bootstrap", bundle);
+			}
 		}
 	}
 
