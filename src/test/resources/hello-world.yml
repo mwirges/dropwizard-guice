@@ -1,0 +1,6 @@
+template: Hello, %s!
+defaultName: Joe
+
+server:
+  type: simple
+  applicationContextPath: /v1
