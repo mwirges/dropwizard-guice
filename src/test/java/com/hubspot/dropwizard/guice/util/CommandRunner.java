@@ -5,7 +5,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
 import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.testing.junit.ConfigOverride;
+import io.dropwizard.testing.ConfigOverride;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.http.client.params.ClientPNames;
 
