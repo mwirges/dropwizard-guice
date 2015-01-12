@@ -34,7 +34,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
     private final InjectorFactory injectorFactory;
 
     private Injector initInjector;
-    private Injector injector;
+    private Injector finalInjector;
     private DropwizardEnvironmentModule dropwizardEnvironmentModule;
     private Optional<Class<T>> configurationClass;
     private Stage stage;
@@ -185,6 +185,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
         //that doesn't have a configuration, loading these modules is useless at best.
         boolean addModules = configuration != null;
         initGuice(environment, addModules);
+        Injector injector = getInjector().get();
 
         if(environment != null) {
             JerseyUtil.registerGuiceBound(injector, environment.jersey());
@@ -226,18 +227,18 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
                 environmentInjector.injectMembers(module);
 
             if (environment != null) modules.add(new JerseyModule());
-            injector = environmentInjector.createChildInjector(ImmutableList.copyOf(modules));
+            finalInjector = environmentInjector.createChildInjector(ImmutableList.copyOf(modules));
         }
-        else injector = environmentInjector;
+        else finalInjector = environmentInjector;
     }
 
     public Provider<Injector> getInjector() {
-        //With double injection, it is not safe to simply provide the injector as the correct
+        //With double injection, it is not safe to simply provide the finalInjector as the correct
         //instance will change over time.
         return new Provider<Injector>() {
             @Override
             public Injector get() {
-                return (injector != null) ? injector : initInjector;
+                return (finalInjector != null) ? finalInjector : initInjector;
             }
         };
     }
