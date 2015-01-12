@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.servlet.ServletContextListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
         private List<Module> modules = Lists.newArrayList();
         private List<Function<Injector, ServletContextListener>> contextListenerGenerators = Lists.newArrayList();
         private Optional<Class<T>> configurationClass = Optional.<Class<T>>absent();
-        private String[] configurationPackages = new String[0];
+        List<String> configurationPackages = new ArrayList<String>();
 
         /**
          * Add a module to the bundle.
@@ -87,9 +89,9 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
          * When config data is bound in the injector, classes within these
          * packages will be recursed into.
          */
-        public Builder<T> setConfigPackages(String... basePackages) {
+        public Builder<T> addConfigPackages(String... basePackages) {
             Preconditions.checkNotNull(basePackages.length > 0);
-            configurationPackages = basePackages;
+            configurationPackages.addAll(Arrays.asList(basePackages));
             return this;
         }
 
@@ -105,7 +107,8 @@ public class GuiceBundle<T extends Configuration> implements ConfiguredBundle<T>
         }
 
         public GuiceBundle<T> build(Stage s) {
-            return new GuiceBundle<T>(s, autoConfig, modules, initModules, contextListenerGenerators, configurationClass, configurationPackages);
+            return new GuiceBundle<T>(s, autoConfig, modules, initModules, contextListenerGenerators,
+                                      configurationClass, configurationPackages.toArray(new String[0]));
         }
 
     }

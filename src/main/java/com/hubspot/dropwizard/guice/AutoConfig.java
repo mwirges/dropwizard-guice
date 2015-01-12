@@ -162,7 +162,7 @@ public class AutoConfig {
         for(Class<? extends Command> command : commandClasses) {
             if(existingCommands.contains(command)) continue;
             bootstrap.addCommand(injector.getInstance(command));
-            logger.info("Added command class {} durring bootstrap", command);
+            logger.info("Added command class {} during bootstrap", command);
         }
     }
 }

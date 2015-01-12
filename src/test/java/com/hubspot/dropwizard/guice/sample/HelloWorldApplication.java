@@ -1,11 +1,14 @@
 package com.hubspot.dropwizard.guice.sample;
 
 import com.hubspot.dropwizard.guice.GuiceBundle;
+import com.hubspot.dropwizard.guice.sample.config.SubConfig;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
+
+	public GuiceBundle<HelloWorldConfiguration> guiceBundle;
 
 	public static void main(String[] args) throws Exception {
 		new HelloWorldApplication().run(args);
@@ -14,10 +17,12 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 	@Override
 	public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
 
-		GuiceBundle<HelloWorldConfiguration> guiceBundle = GuiceBundle.<HelloWorldConfiguration>newBuilder()
-				.addModule(new HelloWorldModule())
+		guiceBundle = GuiceBundle.<HelloWorldConfiguration>newBuilder()
+				.addInitModule(new HelloWorldModule())
+			    .addModule(new DependentModule())
 				.enableAutoConfig(getClass().getPackage().getName())
 				.setConfigClass(HelloWorldConfiguration.class)
+				.addConfigPackages(SubConfig.class.getPackage().getName())
 				.build();
 
 		bootstrap.addBundle(guiceBundle);
