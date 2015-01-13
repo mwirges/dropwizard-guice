@@ -51,7 +51,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 }
 ```
 
-Lastly, you can enable auto configuration via package scanning.
+You can enable auto configuration via package scanning.
 ```java
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
 
@@ -69,6 +69,9 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
       .build();
 
     bootstrap.addBundle(guiceBundle);
+    // with AutoConfig enabled you don't need to add bundles or commands explicitly here.
+    // inherit from one of InjectedCommand, InjectedConfiguredCommand, or InjectedEnvironmentCommand
+    // to get access to all modules during injection.
   }
 
   @Override
@@ -83,6 +86,87 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
   }
 }
 ```
+Configuration data will be auto-injected and named.
+```java
+
+public class HelloWorldConfiguration extends Configuration {
+    @JsonProperty
+    private String template;
+
+    @JsonProperty
+    private Person defaultPerson = new Person();
+
+    public String getTemplate() { return template; }
+
+    public Person getDefaultPerson() { return defaultPerson; }
+}
+
+public class Person {
+    @JsonProperty
+    private String name = "Stranger";
+
+    public String getName() { return name; }
+}
+
+public class HelloWorldModule extends AbstractModule {
+
+    // configuration data is available for injection and named based on the fields in the configuration objects
+    @Inject
+    @Named("template")
+    private String template;
+
+    // defaultPerson.name will only be available if the Person class is defined within the package path
+    // set by addConfigPackages (see below)
+    @Inject
+    @Named("defaultPerson.name")
+    private String defaultName;
+
+    @Override
+    protected void configure() {
+    }
+}
+```
+
+Modules will also be injected before being added.  Field injections only, constructor based injections will not be available.
+Configuration data and initialization module data will be available for injecting into modules.
+```java
+
+
+public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
+
+  public static void main(String[] args) throws Exception {
+    new HelloWorldApplication().run(args);
+  }
+
+  @Override
+  public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+
+    GuiceBundle<HelloWorldConfiguration> guiceBundle = GuiceBundle.<HelloWorldConfiguration>newBuilder()
+      .addInitModule(new BaseModule())
+      // bindings defined in the BaseModule or any configuration data is available for
+      // injection into HelloWorldModule fields
+      .addModule(new HelloWorldModule())
+      //Any resource, task, bundle, etc within this class path will be included automatically.
+      .enableAutoConfig(getClass().getPackage().getName())
+      //The contents of any config objects within this package path will be auto-injected.
+      .addConfigPackages(getClass().getPackage().getName())
+      .setConfigClass(HelloWorldConfiguration.class)
+      .build();
+
+    bootstrap.addBundle(guiceBundle);
+  }
+
+  @Override
+  public String getName() {
+    return "hello-world";
+  }
+
+  @Override
+  public void run(HelloWorldConfiguration helloWorldConfiguration, Environment environment) throws Exception {
+  }
+}
+```
+
 If you are having trouble accessing your Configuration or Environment inside a Guice Module, you could try using a provider.
 
 ```java
