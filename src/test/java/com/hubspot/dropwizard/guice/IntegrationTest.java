@@ -13,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import static io.dropwizard.testing.ResourceHelpers.*;
 import static com.jayway.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -20,7 +21,7 @@ import static org.junit.Assert.*;
 public class IntegrationTest {
     @ClassRule
     public static final DropwizardAppRule<HelloWorldConfiguration> RULE =
-            new DropwizardAppRule<HelloWorldConfiguration>(HelloWorldApplication.class, "src/test/resources/hello-world.yml");
+            new DropwizardAppRule<HelloWorldConfiguration>(HelloWorldApplication.class, resourceFilePath("hello-world.yml"));
 
     private static Injector injector;
 
