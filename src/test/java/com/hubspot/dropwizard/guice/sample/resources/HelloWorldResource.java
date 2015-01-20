@@ -1,6 +1,7 @@
 package com.hubspot.dropwizard.guice.sample.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.hubspot.dropwizard.guice.sample.ConfigData;
 import com.hubspot.dropwizard.guice.sample.core.Saying;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
@@ -34,13 +35,12 @@ public class HelloWorldResource {
     private Request ctx;
 
     @Inject
-    public HelloWorldResource(@Named("template") String template,
-                              @Named("defaultName") String defaultName,
+    public HelloWorldResource(ConfigData config,
                               @Named("sample") String sample,
                               HttpHeaders headers) {
     	logger.info("Creating a new HelloWorldResource!");
-        this.template = template;
-        this.defaultName = defaultName;
+        this.template = config.getTemplate();
+        this.defaultName = config.getDefaultName();
         this.counter = new AtomicLong();
         this.sample = sample;
         this.headers = headers;
