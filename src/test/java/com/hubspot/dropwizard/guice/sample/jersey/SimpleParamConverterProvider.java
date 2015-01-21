@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.sample.resources;
+package com.hubspot.dropwizard.guice.sample.jersey;
 
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;

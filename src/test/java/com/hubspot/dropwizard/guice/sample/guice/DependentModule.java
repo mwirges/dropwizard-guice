@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.sample;
+package com.hubspot.dropwizard.guice.sample.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;

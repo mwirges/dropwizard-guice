@@ -1,7 +1,7 @@
-package com.hubspot.dropwizard.guice.sample.resources;
+package com.hubspot.dropwizard.guice.sample.jersey;
 
 import com.codahale.metrics.annotation.Timed;
-import com.hubspot.dropwizard.guice.sample.ConfigData;
+import com.hubspot.dropwizard.guice.sample.guice.ConfigData;
 import com.hubspot.dropwizard.guice.sample.core.Saying;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;

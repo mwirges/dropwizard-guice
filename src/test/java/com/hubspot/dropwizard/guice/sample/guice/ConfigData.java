@@ -1,4 +1,4 @@
-package com.hubspot.dropwizard.guice.sample;
+package com.hubspot.dropwizard.guice.sample.guice;
 
 import javax.inject.Inject;
 import javax.inject.Named;
