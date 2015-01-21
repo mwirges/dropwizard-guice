@@ -37,6 +37,11 @@ public class IntegrationTest {
     }
 
     @Test
+    public void value_passed_through_param_converter() throws Exception {
+        get("/v1/hello-world?name=Bob").then().body("content", equalTo("Hello, Bob!"));
+    }
+
+    @Test
     public void configuration_injection_in_healthcheck() throws Exception {
         get("admin/healthcheck").then().body("template.healthy", equalTo(true));
     }

@@ -2,6 +2,7 @@ package com.hubspot.dropwizard.guice.sample;
 
 import com.hubspot.dropwizard.guice.GuiceBundle;
 import com.hubspot.dropwizard.guice.sample.config.SubConfig;
+import com.hubspot.dropwizard.guice.sample.resources.SimpleParamConverterProvider;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;

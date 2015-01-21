@@ -48,11 +48,12 @@ public class HelloWorldResource {
 
     @GET
     @Timed
-    public Saying sayHello(@QueryParam("name") Optional<String> name, @Context ServletContext context) {
+    public Saying sayHello(@QueryParam("name") Optional<ParamInput> nameInput, @Context ServletContext context) {
     	logger.info("User-Agent: " + headers.getRequestHeader("User-Agent"));
     	logger.info(Integer.toString(ctx.hashCode()));
-        return new Saying(counter.incrementAndGet(),
-                          String.format(template, name.or(defaultName)));
+
+        String name = (nameInput.isPresent()) ? nameInput.get().data : defaultName;
+        return new Saying(counter.incrementAndGet(), String.format(template, name));
     }
 
     @GET
