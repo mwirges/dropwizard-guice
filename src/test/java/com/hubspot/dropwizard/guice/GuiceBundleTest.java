@@ -1,5 +1,6 @@
 package com.hubspot.dropwizard.guice;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
 import com.hubspot.dropwizard.guice.objects.*;
 import io.dropwizard.Configuration;
@@ -17,6 +18,7 @@ import javax.servlet.ServletException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GuiceBundleTest {
@@ -34,6 +36,7 @@ public class GuiceBundleTest {
                 .addModule(new TestModule())
                 .build();
         Bootstrap bootstrap = mock(Bootstrap.class);
+        when(bootstrap.getCommands()).thenReturn(ImmutableList.of());
         guiceBundle.initialize(bootstrap);
         guiceBundle.run(new Configuration(), environment);
     }
@@ -41,19 +44,19 @@ public class GuiceBundleTest {
     @Test
     public void createsInjectorWhenInit() throws ServletException {
         //then
-        Injector injector = guiceBundle.getInjector();
+        Injector injector = guiceBundle.getInjector().get();
         assertThat(injector).isNotNull();
     }
 
     @Test
     public void serviceLocatorIsAvaliable () throws ServletException {
-        ServiceLocator serviceLocator = guiceBundle.getInjector().getInstance(ServiceLocator.class);
+        ServiceLocator serviceLocator = guiceBundle.getInjector().get().getInstance(ServiceLocator.class);
         assertThat(serviceLocator).isNotNull();
     }
 
     @Test
     public void guiceBindingsAreBridgedToHk2() throws ServletException {
-        Injector injector = guiceBundle.getInjector();
+        Injector injector = guiceBundle.getInjector().get();
         ServiceLocator serviceLocator = injector.getInstance(ServiceLocator.class);
         //given
         InjectedTask guiceTask = injector.getInstance(InjectedTask.class);
@@ -73,7 +76,7 @@ public class GuiceBundleTest {
     @Test
     public void jitGuiceBindingsAreNotBridgedToHk2() throws ServletException {
         // when
-        ServiceLocator serviceLocator = guiceBundle.getInjector().getInstance(ServiceLocator.class);
+        ServiceLocator serviceLocator = guiceBundle.getInjector().get().getInstance(ServiceLocator.class);
 
         // then
         assertThat(serviceLocator.getService(InjectedBundle.class)).isNull();

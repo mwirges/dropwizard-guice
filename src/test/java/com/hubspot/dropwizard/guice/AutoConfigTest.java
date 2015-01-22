@@ -1,5 +1,6 @@
 package com.hubspot.dropwizard.guice;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.hubspot.dropwizard.guice.objects.TestModule;
@@ -36,13 +37,14 @@ public class AutoConfigTest {
     @Before
     public void setUp() {
         //when
-        autoConfig = new AutoConfig(getClass().getPackage().getName());
+        autoConfig = new AutoConfig(TestModule.class.getPackage().getName());
     }
 
     @Test
     public void addBundlesDuringBootStrap() {
         //given
         final Bootstrap bootstrap = mock(Bootstrap.class);
+        when(bootstrap.getCommands()).thenReturn(ImmutableList.of());
         Bundle singletonBundle = injector.getInstance(InjectedBundle.class);
 
         //when
